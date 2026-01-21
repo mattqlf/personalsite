@@ -52,15 +52,28 @@ const { apiPath = "/api/github" } = Astro.props;
 
       gridEl.innerHTML = "";
       monthsEl.innerHTML = "";
+      monthsEl.style.display = "flex";
+      monthsEl.style.gap = "3px";
 
       let lastMonth = -1;
-      const monthPositions = [];
+      const monthLabels = [];
 
       weeks.forEach((week, weekIndex) => {
+        const firstDay = week.contributionDays[0];
+        const date = new Date(firstDay.date);
+        const month = date.getMonth();
+
+        if (month !== lastMonth) {
+          monthLabels.push(MONTHS[month]);
+          lastMonth = month;
+        } else {
+          monthLabels.push("");
+        }
+
         const weekCol = document.createElement("div");
         weekCol.className = "flex flex-col gap-[3px]";
 
-        week.contributionDays.forEach((day, dayIndex) => {
+        week.contributionDays.forEach((day) => {
           const square = document.createElement("div");
           square.style.width = "10px";
           square.style.height = "10px";
@@ -71,30 +84,19 @@ const { apiPath = "/api/github" } = Astro.props;
           }
           square.title = `${day.contributionCount} contribution${day.contributionCount !== 1 ? 's' : ''} on ${day.date}`;
           weekCol.appendChild(square);
-
-          if (dayIndex === 0) {
-            const date = new Date(day.date);
-            const month = date.getMonth();
-            if (month !== lastMonth) {
-              monthPositions.push({ month, weekIndex });
-              lastMonth = month;
-            }
-          }
         });
 
         gridEl.appendChild(weekCol);
       });
 
-      const totalWidth = weeks.length * 13;
-      monthsEl.style.width = `${totalWidth}px`;
-      monthsEl.style.position = "relative";
-
-      monthPositions.forEach(({ month, weekIndex }) => {
-        const label = document.createElement("span");
-        label.textContent = MONTHS[month];
-        label.style.position = "absolute";
-        label.style.left = `${weekIndex * 13}px`;
-        monthsEl.appendChild(label);
+      monthLabels.forEach((label) => {
+        const span = document.createElement("span");
+        span.style.width = "10px";
+        span.style.fontSize = "11px";
+        span.style.overflow = "visible";
+        span.style.whiteSpace = "nowrap";
+        span.textContent = label;
+        monthsEl.appendChild(span);
       });
     };
 
