@@ -11,25 +11,25 @@ const { apiPath = "/api/github" } = Astro.props;
   data-api-path={apiPath}
   class="w-full max-w-3xl"
 >
-  <div class="mb-2 text-sm text-foreground/70">
+  <div class="mb-3 text-sm text-foreground/80 font-medium">
     <span data-total>Loading contributions...</span>
   </div>
   <div class="overflow-x-auto">
     <div class="inline-block min-w-fit">
-      <div data-months class="mb-1 flex text-xs text-foreground/60" style="padding-left: 0;">
+      <div data-months class="mb-[2px] flex text-[11px] text-foreground/50">
       </div>
       <div data-grid class="flex gap-[3px]">
       </div>
     </div>
   </div>
-  <div class="mt-2 flex items-center justify-end gap-1 text-xs text-foreground/60">
+  <div class="mt-2 flex items-center justify-end gap-[6px] text-[11px] text-foreground/50">
     <span>Less</span>
-    <div class="flex gap-[2px]">
-      <div class="size-[10px] rounded-sm" style="background-color: #161b22; border: 1px solid #30363d;"></div>
-      <div class="size-[10px] rounded-sm" style="background-color: #0e4429;"></div>
-      <div class="size-[10px] rounded-sm" style="background-color: #006d32;"></div>
-      <div class="size-[10px] rounded-sm" style="background-color: #26a641;"></div>
-      <div class="size-[10px] rounded-sm" style="background-color: #39d353;"></div>
+    <div class="flex gap-[3px]" data-legend>
+      <div class="size-[10px] rounded-[2px] bg-[#ebedf0] dark:bg-[#161b22] outline outline-1 outline-black/5 dark:outline-white/5"></div>
+      <div class="size-[10px] rounded-[2px] bg-[#9be9a8] dark:bg-[#0e4429]"></div>
+      <div class="size-[10px] rounded-[2px] bg-[#40c463] dark:bg-[#006d32]"></div>
+      <div class="size-[10px] rounded-[2px] bg-[#30a14e] dark:bg-[#26a641]"></div>
+      <div class="size-[10px] rounded-[2px] bg-[#216e39] dark:bg-[#39d353]"></div>
     </div>
     <span>More</span>
   </div>
@@ -62,9 +62,14 @@ const { apiPath = "/api/github" } = Astro.props;
 
         week.contributionDays.forEach((day, dayIndex) => {
           const square = document.createElement("div");
-          square.className = "size-[10px] rounded-sm";
+          square.style.width = "10px";
+          square.style.height = "10px";
+          square.style.borderRadius = "2px";
           square.style.backgroundColor = day.color;
-          square.title = `${day.contributionCount} contributions on ${day.date}`;
+          if (day.contributionCount === 0) {
+            square.style.outline = "1px solid rgba(0,0,0,0.06)";
+          }
+          square.title = `${day.contributionCount} contribution${day.contributionCount !== 1 ? 's' : ''} on ${day.date}`;
           weekCol.appendChild(square);
 
           if (dayIndex === 0) {
