@@ -1,0 +1,128 @@
+---
+export interface Props {
+  apiPath?: string;
+}
+
+const { apiPath = "/api/github" } = Astro.props;
+---
+
+<div
+  id="github-contributions"
+  data-api-path={apiPath}
+  class="w-full max-w-3xl"
+>
+  <div class="mb-2 text-sm text-foreground/70">
+    <span data-total>Loading contributions...</span>
+  </div>
+  <div class="overflow-x-auto">
+    <div class="inline-block min-w-fit">
+      <div data-months class="mb-1 flex text-xs text-foreground/60" style="padding-left: 0;">
+      </div>
+      <div data-grid class="flex gap-[3px]">
+      </div>
+    </div>
+  </div>
+  <div class="mt-2 flex items-center justify-end gap-1 text-xs text-foreground/60">
+    <span>Less</span>
+    <div class="flex gap-[2px]">
+      <div class="size-[10px] rounded-sm" style="background-color: #161b22; border: 1px solid #30363d;"></div>
+      <div class="size-[10px] rounded-sm" style="background-color: #0e4429;"></div>
+      <div class="size-[10px] rounded-sm" style="background-color: #006d32;"></div>
+      <div class="size-[10px] rounded-sm" style="background-color: #26a641;"></div>
+      <div class="size-[10px] rounded-sm" style="background-color: #39d353;"></div>
+    </div>
+    <span>More</span>
+  </div>
+</div>
+
+<script is:inline data-astro-rerun>
+  const initGitHubContributions = () => {
+    const root = document.querySelector("#github-contributions");
+    if (!root) return;
+
+    const apiPath = root.getAttribute("data-api-path") || "/api/github";
+    const totalEl = root.querySelector("[data-total]");
+    const gridEl = root.querySelector("[data-grid]");
+    const monthsEl = root.querySelector("[data-months]");
+
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const renderGrid = (weeks) => {
+      if (!gridEl || !monthsEl) return;
+
+      gridEl.innerHTML = "";
+      monthsEl.innerHTML = "";
+
+      let lastMonth = -1;
+      const monthPositions = [];
+
+      weeks.forEach((week, weekIndex) => {
+        const weekCol = document.createElement("div");
+        weekCol.className = "flex flex-col gap-[3px]";
+
+        week.contributionDays.forEach((day, dayIndex) => {
+          const square = document.createElement("div");
+          square.className = "size-[10px] rounded-sm";
+          square.style.backgroundColor = day.color;
+          square.title = `${day.contributionCount} contributions on ${day.date}`;
+          weekCol.appendChild(square);
+
+          if (dayIndex === 0) {
+            const date = new Date(day.date);
+            const month = date.getMonth();
+            if (month !== lastMonth) {
+              monthPositions.push({ month, weekIndex });
+              lastMonth = month;
+            }
+          }
+        });
+
+        gridEl.appendChild(weekCol);
+      });
+
+      const totalWidth = weeks.length * 13;
+      monthsEl.style.width = `${totalWidth}px`;
+      monthsEl.style.position = "relative";
+
+      monthPositions.forEach(({ month, weekIndex }) => {
+        const label = document.createElement("span");
+        label.textContent = MONTHS[month];
+        label.style.position = "absolute";
+        label.style.left = `${weekIndex * 13}px`;
+        monthsEl.appendChild(label);
+      });
+    };
+
+    const fetchContributions = async () => {
+      try {
+        const response = await fetch(apiPath, {
+          headers: { Accept: "application/json" },
+        });
+
+        if (!response.ok) {
+          if (totalEl) totalEl.textContent = "Failed to load contributions";
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+          if (totalEl) totalEl.textContent = "Failed to load contributions";
+          return;
+        }
+
+        if (totalEl) {
+          totalEl.textContent = `${data.totalContributions.toLocaleString()} contributions in the last year`;
+        }
+
+        renderGrid(data.weeks);
+      } catch (error) {
+        if (totalEl) totalEl.textContent = "Failed to load contributions";
+      }
+    };
+
+    fetchContributions();
+  };
+
+  initGitHubContributions();
+</script>

@@ -12,6 +12,7 @@ import IconRss from "@/assets/icons/IconRss.svg";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
+import GitHubContributions from "@/components/GitHubContributions.astro";
 
 const posts = await getCollection("blog");
 
@@ -62,12 +63,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
       }
 
       <div class="mt-6">
-        <img
-          src="https://ghchart.rshah.org/mattqlf"
-          alt="GitHub Contribution Graph"
-          loading="lazy"
-          class="w-full max-w-2xl"
-        />
+        <GitHubContributions />
       </div>
     </section>
 
