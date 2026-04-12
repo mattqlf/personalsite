@@ -9,7 +9,6 @@ import getUniqueTags from "@/utils/getUniqueTags";
 import { SITE } from "@/config";
 
 const posts = await getCollection("blog");
-
 let tags = getUniqueTags(posts);
 ---
 

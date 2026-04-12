@@ -1,6 +1,5 @@
 ---
 import { getCollection } from "astro:content";
-import Main from "@/layouts/Main.astro";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -8,13 +7,11 @@ import Card from "@/components/Card.astro";
 import getPostsByGroupCondition from "@/utils/getPostsByGroupCondition";
 import { SITE } from "@/config";
 
-// Redirect to 404 page if `showArchives` config is false
 if (!SITE.showArchives) {
   return Astro.redirect("/404");
 }
 
 const posts = await getCollection("blog", ({ data }) => !data.draft);
-
 const months = [
   "January",
   "February",
@@ -33,7 +30,9 @@ const months = [
 
 <Layout title={`Archives | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="Archives" pageDesc="All the articles I've archived.">
+  <main id="main-content" class="mx-auto w-full max-w-app px-6 py-8 flex-1">
+    <h1 class="text-2xl font-semibold mb-1">Archives</h1>
+    <p class="text-sm text-muted mb-6">All articles by date.</p>
     {
       Object.entries(
         getPostsByGroupCondition(posts, post =>
@@ -42,9 +41,13 @@ const months = [
       )
         .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
         .map(([year, yearGroup]) => (
-          <div>
-            <span class="text-2xl font-bold">{year}</span>
-            <sup class="text-sm">{yearGroup.length}</sup>
+          <div class="mb-8">
+            <h2 class="text-xl font-semibold">
+              {year}{" "}
+              <span class="text-sm text-muted font-normal">
+                ({yearGroup.length})
+              </span>
+            </h2>
             {Object.entries(
               getPostsByGroupCondition(
                 yearGroup,
@@ -53,12 +56,11 @@ const months = [
             )
               .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
               .map(([month, monthGroup]) => (
-                <div class="flex flex-col sm:flex-row">
-                  <div class="mt-6 min-w-36 text-lg sm:my-6">
-                    <span class="font-bold">{months[Number(month) - 1]}</span>
-                    <sup class="text-xs">{monthGroup.length}</sup>
-                  </div>
-                  <ul>
+                <div class="mt-4">
+                  <h3 class="text-sm font-medium text-muted mb-2">
+                    {months[Number(month) - 1]}
+                  </h3>
+                  <ul class="space-y-3">
                     {monthGroup
                       .sort(
                         (a, b) =>
@@ -78,6 +80,6 @@ const months = [
           </div>
         ))
     }
-  </Main>
+  </main>
   <Footer />
 </Layout>
