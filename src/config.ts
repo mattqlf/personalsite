@@ -2,7 +2,7 @@ export const SITE = {
   website: "https://mattqlf.com/",
   author: "Matthew Li",
   profile: "https://mattqlf.com/",
-  desc: "Personal website and blog of Matthew Li - Software Engineer and CMU student.",
+  desc: "Personal website and blog of Matthew Li.",
   title: "Matthew Li",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,

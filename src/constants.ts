@@ -1,7 +1,6 @@
 import type { Props } from "astro";
 import IconBrandX from "@/assets/icons/IconBrandX.svg";
 import IconLinkedin from "@/assets/icons/IconLinkedin.svg";
-import IconScholar from "@/assets/icons/IconScholar.svg";
 import IconGitHub from "@/assets/icons/IconGitHub.svg";
 import IconMail from "@/assets/icons/IconMail.svg";
 import { SITE } from "@/config";
@@ -25,12 +24,6 @@ export const SOCIALS: Social[] = [
     href: "https://www.linkedin.com/in/mattqlf/",
     linkTitle: `${SITE.title} on LinkedIn`,
     icon: IconLinkedin,
-  },
-  {
-    name: "Google Scholar",
-    href: "https://scholar.google.com/citations?&user=UWWMBoMAAAAJ",
-    linkTitle: `${SITE.title} on Google Scholar`,
-    icon: IconScholar,
   },
   {
     name: "GitHub",
